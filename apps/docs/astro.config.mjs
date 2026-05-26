@@ -38,7 +38,10 @@ export default defineConfig({
             { label: "Data Model", slug: "reference/data-model" },
             { label: "API", slug: "reference/api" },
             { label: "Salary Metrics", slug: "reference/salary-metrics" },
-            { label: "Configuration & Scripts", slug: "reference/configuration" },
+            {
+              label: "Configuration & Scripts",
+              slug: "reference/configuration",
+            },
           ],
         },
         {

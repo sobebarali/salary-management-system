@@ -10,6 +10,13 @@ export const Route = createFileRoute("/")({
 function HomeComponent() {
   const healthCheck = useQuery(orpc.healthCheck.queryOptions());
 
+  let statusLabel = "Disconnected";
+  if (healthCheck.isLoading) {
+    statusLabel = "Checking...";
+  } else if (healthCheck.data) {
+    statusLabel = "Connected";
+  }
+
   return (
     <div className="container mx-auto max-w-3xl px-4 py-2">
       <div className="grid gap-6">
@@ -19,13 +26,7 @@ function HomeComponent() {
             <div
               className={`h-2 w-2 rounded-full ${healthCheck.data ? "bg-green-500" : "bg-red-500"}`}
             />
-            <span className="text-muted-foreground text-sm">
-              {healthCheck.isLoading
-                ? "Checking..."
-                : healthCheck.data
-                  ? "Connected"
-                  : "Disconnected"}
-            </span>
+            <span className="text-muted-foreground text-sm">{statusLabel}</span>
           </div>
         </section>
       </div>
