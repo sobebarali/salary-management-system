@@ -10,7 +10,7 @@ The API contract: procedures, inputs, outputs, errors. Look things up here; don'
 > Status: ✅ The oRPC plumbing (`publicProcedure`, `protectedProcedure`, context, both handlers)
 > exists, and the `employees` and `insights` routers below are implemented in
 > `packages/api/src/routers/` — both covered by integration tests against a real Postgres. The web
-> UI that consumes them is still 🟡 designed.
+> UI (Employees and Insights screens) consumes them.
 
 ## Conventions
 

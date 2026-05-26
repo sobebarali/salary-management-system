@@ -180,4 +180,4 @@ A read from the employee list, end to end:
 - ✅ Employee schema, and the `employees` CRUD + `insights` procedures, with integration tests
   against a real PostgreSQL.
 - ✅ The fast, deterministic 10k seed script (`bun run db:seed`).
-- 🟡 The web UI (specified in the Design and Engineering sections).
+- ✅ The web UI — Employees (`/employees`) and Insights (`/insights`) screens.
