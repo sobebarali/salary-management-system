@@ -8,9 +8,10 @@ The reasoning behind *what* we test and *why*. Commands to run tests are in
 [Configuration & Scripts](/reference/configuration/).
 :::
 
-> Status: 🟡 **In progress.** Vitest is wired up (it fits the Vite/Bun toolchain), and the first
-> integration specs — the `employee` data model against a real PostgreSQL — are ✅ in
-> `packages/db`. The insight/procedure/seed and e2e layers below are still 🟡 designed.
+> Status: 🟡 **In progress.** Vitest is wired up (it fits the Vite/Bun toolchain). The `employee`
+> data model (`packages/db`) and the `insights` procedures (`packages/api`, driven against a real
+> PostgreSQL through a typed oRPC caller) are ✅. The employee-CRUD, seed, and e2e layers below are
+> still 🟡 designed.
 
 The assignment asks for a **meaningful** set of tests that are **fast, deterministic, and easy to
 understand** — not coverage theatre. So we test the parts where bugs would actually hurt the HR

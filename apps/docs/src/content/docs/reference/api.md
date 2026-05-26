@@ -8,8 +8,9 @@ The API contract: procedures, inputs, outputs, errors. Look things up here; don'
 :::
 
 > Status: ✅ The oRPC plumbing (`publicProcedure`, `protectedProcedure`, context, both handlers)
-> exists. The `healthCheck` / `privateData` demo procedures are present. 🟡 The `employees` and
-> `insights` routers below are the procedures to implement in `packages/api/src/routers/`.
+> exists, and the `insights` router below is implemented in `packages/api/src/routers/insights.ts`
+> (covered by integration tests against a real Postgres). 🟡 The `employees` router is still the
+> procedures to implement.
 
 ## Conventions
 
@@ -47,7 +48,7 @@ const employeeInput = z.object({
   department: z.string().max(120).optional(),
   email: z.email().optional(),
   employmentType: z.enum(["full_time", "part_time", "contract", "intern"]).default("full_time"),
-  hireDate: z.string().date().optional(),
+  hireDate: z.iso.date().optional(),
 });
 ```
 
@@ -97,7 +98,7 @@ row (or id). `update` takes a partial schema so the UI can PATCH a single field.
 mutation, the web app invalidates the relevant TanStack Query keys so the list and insights
 refresh automatically.
 
-## `insights` router 🟡
+## `insights` router ✅
 
 These map directly to the assignment's required metrics. The aggregation runs **in PostgreSQL** —
 see [Salary Metrics](/reference/salary-metrics/) for the SQL and metric definitions.

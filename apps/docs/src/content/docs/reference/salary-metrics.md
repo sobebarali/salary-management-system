@@ -8,7 +8,9 @@ Precise metric definitions and the SQL that computes them. The *why* (mean vs. m
 called out inline but the design rationale lives in [Explanation → Decisions](/explanation/decisions/).
 :::
 
-> Status: 🟡 **Designed.** Backs the `insights` router in the [API](/reference/api/).
+> Status: ✅ **Implemented** (metrics 1–5) — backs the `insights` router in the
+> [API](/reference/api/). The salary-distribution histogram (metric 6) is 🟡 **designed**: the SQL
+> is specified below but no procedure exposes it yet.
 
 Every metric is computed **in PostgreSQL**, not in JavaScript. The database is built for
 aggregation, the math stays correct on large sets, and we never pull 10k rows into the server
@@ -86,7 +88,7 @@ LIMIT $2;
 The `HAVING count(*) >= 3` guard prevents a single highly-paid person from topping the chart as a
 "job title" of one — a small but important correctness detail for averages.
 
-### 6. Salary distribution (histogram)
+### 6. Salary distribution (histogram) 🟡
 
 ```sql
 SELECT width_bucket(salary, 0, 30000000, 10) AS bucket, count(*)
@@ -113,11 +115,13 @@ Lets the UI render a distribution chart so Priya sees *shape*, not just a single
 Salaries carry a `currency`. Averaging across mixed currencies is meaningless ("avg of €80k and
 $90k" is nonsense). The tool handles this honestly:
 
-- Per-country insights are typically **single-currency** in practice, so we return the country's
-  dominant currency alongside the figures.
-- Where a group spans currencies, the API returns a `mixedCurrency: true` flag and the UI labels
-  the number as approximate. **Normalizing via FX rates is a 🔭 considered, deferred feature** —
-  it needs a rate source and a chosen base currency, which is out of scope for the minimal tool.
+- Per-country insights (`byCountry`, `jobTitleInCountry`) and each per-country row of
+  `salaryByCountry` are **single-currency** in practice, so their averages are meaningful as-is.
+  `overview` reports the org's **dominant** currency via `mode()`.
+- The API does **not** convert currencies. The one place a group can span currencies is
+  `topJobTitles` without a country filter; there the average is a raw figure the UI should label
+  approximate. **Normalizing via FX rates is a 🔭 considered, deferred feature** — it needs a rate
+  source and a chosen base currency, out of scope for the minimal tool.
 
 ## Caching
 
