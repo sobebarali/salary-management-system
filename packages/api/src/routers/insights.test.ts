@@ -72,6 +72,7 @@ const roster = [
 ];
 
 const caller = createTestCaller();
+const anonCaller = createTestCaller(null);
 
 describe("insights router", () => {
   beforeEach(async () => {
@@ -81,6 +82,12 @@ describe("insights router", () => {
 
   afterAll(async () => {
     await closeTestDb();
+  });
+
+  it("rejects an unauthenticated caller", async () => {
+    await expect(anonCaller.insights.overview({})).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
   });
 
   describe("byCountry", () => {
