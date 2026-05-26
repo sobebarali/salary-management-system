@@ -96,4 +96,98 @@ describe("employees router", () => {
       ).rejects.toMatchObject({ code: "NOT_FOUND" });
     });
   });
+
+  describe("list", () => {
+    const listRoster = [
+      {
+        firstName: "Ana",
+        lastName: "Adams",
+        jobTitle: "Engineer",
+        countryCode: "US",
+        salary: 5_000_000,
+        currency: "USD",
+      },
+      {
+        firstName: "Ben",
+        lastName: "Brown",
+        jobTitle: "Engineer",
+        countryCode: "US",
+        salary: 9_000_000,
+        currency: "USD",
+      },
+      {
+        firstName: "Cara",
+        lastName: "Clark",
+        jobTitle: "Manager",
+        countryCode: "US",
+        salary: 12_000_000,
+        currency: "USD",
+      },
+      {
+        firstName: "Dirk",
+        lastName: "Diaz",
+        jobTitle: "Engineer",
+        countryCode: "DE",
+        salary: 7_000_000,
+        currency: "EUR",
+      },
+      {
+        firstName: "Eve",
+        lastName: "Evans",
+        jobTitle: "Manager",
+        countryCode: "DE",
+        salary: 11_000_000,
+        currency: "EUR",
+      },
+    ];
+
+    beforeEach(async () => {
+      await testDb.insert(employee).values(listRoster);
+    });
+
+    it("returns the first page ordered by name with a total count", async () => {
+      const result = await caller.employees.list({});
+
+      expect(result.total).toBe(5);
+      expect(result.page).toBe(1);
+      expect(result.pageSize).toBe(25);
+      expect(result.rows).toHaveLength(5);
+      expect(result.rows[0]?.lastName).toBe("Adams");
+    });
+
+    it("filters by country", async () => {
+      const result = await caller.employees.list({ country: "DE" });
+
+      expect(result.total).toBe(2);
+      expect(result.rows.every((r) => r.countryCode === "DE")).toBe(true);
+    });
+
+    it("filters by job title", async () => {
+      const result = await caller.employees.list({ jobTitle: "Manager" });
+
+      expect(result.total).toBe(2);
+    });
+
+    it("searches first and last name case-insensitively", async () => {
+      const result = await caller.employees.list({ search: "bro" });
+
+      expect(result.total).toBe(1);
+      expect(result.rows[0]?.lastName).toBe("Brown");
+    });
+
+    it("sorts by salary descending", async () => {
+      const result = await caller.employees.list({ sort: "salary_desc" });
+
+      expect(result.rows[0]?.salary).toBe(12_000_000);
+    });
+
+    it("paginates with limit and offset", async () => {
+      const result = await caller.employees.list({ page: 2, pageSize: 2 });
+
+      expect(result.total).toBe(5);
+      expect(result.page).toBe(2);
+      expect(result.rows).toHaveLength(2);
+      expect(result.rows[0]?.lastName).toBe("Clark");
+    });
+  });
 });
