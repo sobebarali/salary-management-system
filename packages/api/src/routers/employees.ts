@@ -4,7 +4,11 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { protectedProcedure } from "../index";
-import { employeeId, employeeInput } from "../schemas/employee";
+import {
+  employeeId,
+  employeeInput,
+  updateEmployeeInput,
+} from "../schemas/employee";
 
 export const employeesRouter = {
   create: protectedProcedure
@@ -22,6 +26,24 @@ export const employeesRouter = {
         .select()
         .from(employee)
         .where(eq(employee.id, input.id));
+
+      if (!row) {
+        throw new ORPCError("NOT_FOUND");
+      }
+
+      return row;
+    }),
+
+  update: protectedProcedure
+    .input(updateEmployeeInput)
+    .handler(async ({ context, input }) => {
+      const { id, ...patch } = input;
+
+      const [row] = await context.db
+        .update(employee)
+        .set(patch)
+        .where(eq(employee.id, id))
+        .returning();
 
       if (!row) {
         throw new ORPCError("NOT_FOUND");
