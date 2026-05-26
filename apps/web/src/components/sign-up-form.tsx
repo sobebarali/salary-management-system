@@ -66,7 +66,7 @@ export default function SignUpForm({
   }
 
   return (
-    <div className="flex min-h-full items-center justify-center p-4">
+    <div className="flex min-h-svh items-center justify-center p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <h1 className="font-semibold text-base tracking-tight">
