@@ -198,4 +198,22 @@ describe("insights router", () => {
       ]);
     });
   });
+
+  describe("histogram", () => {
+    it("buckets a country's salaries across the fixed range", async () => {
+      const rows = await caller.insights.histogram({ country: "US" });
+
+      expect(rows).toEqual([
+        { bucket: 3, count: 3 },
+        { bucket: 4, count: 1 },
+        { bucket: 5, count: 1 },
+      ]);
+    });
+
+    it("returns only the buckets that contain employees", async () => {
+      const rows = await caller.insights.histogram({ country: "DE" });
+
+      expect(rows).toEqual([{ bucket: 5, count: 3 }]);
+    });
+  });
 });
