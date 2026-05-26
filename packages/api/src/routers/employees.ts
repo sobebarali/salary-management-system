@@ -51,4 +51,19 @@ export const employeesRouter = {
 
       return row;
     }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: employeeId }))
+    .handler(async ({ context, input }) => {
+      const [row] = await context.db
+        .delete(employee)
+        .where(eq(employee.id, input.id))
+        .returning({ id: employee.id });
+
+      if (!row) {
+        throw new ORPCError("NOT_FOUND");
+      }
+
+      return row;
+    }),
 };
