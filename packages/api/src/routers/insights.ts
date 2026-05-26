@@ -22,7 +22,9 @@ export const insightsRouter = {
         .from(employee)
         .where(eq(employee.countryCode, input.country));
 
-      return row;
+      return (
+        row ?? { min: null, max: null, avg: null, median: null, headcount: 0 }
+      );
     }),
 
   jobTitleInCountry: protectedProcedure
@@ -44,7 +46,7 @@ export const insightsRouter = {
           )
         );
 
-      return row;
+      return row ?? { avg: null, median: null, headcount: 0 };
     }),
 
   overview: protectedProcedure.handler(async ({ context }) => {
@@ -58,7 +60,7 @@ export const insightsRouter = {
       })
       .from(employee);
 
-    return row;
+    return row ?? { totalEmployees: 0, countries: 0, currency: null };
   }),
 
   salaryByCountry: protectedProcedure.handler(
