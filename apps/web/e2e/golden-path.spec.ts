@@ -26,8 +26,11 @@ test("sign up, add an employee, and see it reflected in insights", async ({
   await page.getByLabel("Salary (major units)").fill("90000");
   await page.getByRole("button", { name: "Save" }).click();
 
-  // The new employee appears in the server-side list.
-  await expect(page.getByRole("cell", { name: "Ada Lovelace" })).toBeVisible();
+  // The new employee appears in the server-side list. Exact match avoids the
+  // row's action buttons, whose aria-labels also contain the name.
+  await expect(
+    page.getByRole("cell", { name: "Ada Lovelace", exact: true })
+  ).toBeVisible();
 
   // Insights reflect the new roster — the DB is clean, so exactly one employee
   // in one country.

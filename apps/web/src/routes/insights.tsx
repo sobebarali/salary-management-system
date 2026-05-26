@@ -56,7 +56,10 @@ function StatCard({
           {label}
         </CardTitle>
       </CardHeader>
-      <CardContent className="font-semibold text-lg" data-testid={testId}>
+      <CardContent
+        className="font-semibold text-lg tabular-nums"
+        data-testid={testId}
+      >
         {value}
       </CardContent>
     </Card>
@@ -121,7 +124,12 @@ function InsightsPage() {
 
   return (
     <div className="container mx-auto flex flex-col gap-6 px-4 py-4">
-      <h1 className="font-semibold text-xl">Insights</h1>
+      <div className="space-y-0.5">
+        <h1 className="font-semibold text-xl tracking-tight">Insights</h1>
+        <p className="text-muted-foreground text-sm">
+          Salary metrics across your organization, computed in the database.
+        </p>
+      </div>
 
       <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <StatCard
@@ -140,54 +148,70 @@ function InsightsPage() {
         />
       </section>
 
-      <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Average salary by country</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer className="h-64 w-full" config={salaryChartConfig}>
-              <BarChart accessibilityLayer data={byCountryChartData}>
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  axisLine={false}
-                  dataKey="label"
-                  tickLine={false}
-                  tickMargin={8}
-                />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="value" fill="var(--color-value)" radius={4} />
-              </BarChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
+      <section className="flex flex-col gap-3">
+        <h2 className="font-medium text-sm tracking-tight">
+          Salary by country & role
+        </h2>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">
+                Average salary by country
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer
+                className="h-64 w-full"
+                config={salaryChartConfig}
+              >
+                <BarChart accessibilityLayer data={byCountryChartData}>
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    axisLine={false}
+                    dataKey="label"
+                    tickLine={false}
+                    tickMargin={8}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="value" fill="var(--color-value)" radius={4} />
+                </BarChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Top-paying job titles</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer className="h-64 w-full" config={salaryChartConfig}>
-              <BarChart accessibilityLayer data={topRolesChartData}>
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  axisLine={false}
-                  dataKey="label"
-                  tickLine={false}
-                  tickMargin={8}
-                />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="value" fill="var(--color-value)" radius={4} />
-              </BarChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Top-paying job titles</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer
+                className="h-64 w-full"
+                config={salaryChartConfig}
+              >
+                <BarChart accessibilityLayer data={topRolesChartData}>
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    axisLine={false}
+                    dataKey="label"
+                    tickLine={false}
+                    tickMargin={8}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="value" fill="var(--color-value)" radius={4} />
+                </BarChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        </div>
       </section>
 
       <section className="flex flex-col gap-3">
+        <h2 className="font-medium text-sm tracking-tight">
+          Country salary band
+        </h2>
         <div className="flex items-end gap-3">
           <div className="space-y-1.5">
-            <Label>Country salary band</Label>
+            <Label>Country</Label>
             <Combobox
               allLabel="Select a country"
               onChange={setBandCountry}
@@ -243,9 +267,9 @@ function InsightsPage() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <CardTitle className="text-sm">
+        <h2 className="font-medium text-sm tracking-tight">
           Average for a role in a country
-        </CardTitle>
+        </h2>
         <div className="flex flex-wrap items-end gap-3">
           <div className="space-y-1.5">
             <Label>Country</Label>

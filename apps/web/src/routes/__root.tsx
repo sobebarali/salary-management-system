@@ -51,8 +51,16 @@ function RootComponent() {
         storageKey="vite-ui-theme"
       >
         <div className="grid h-svh grid-rows-[auto_1fr]">
+          <a
+            className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:z-50 focus-visible:bg-background focus-visible:px-3 focus-visible:py-2 focus-visible:text-sm focus-visible:ring-1 focus-visible:ring-ring"
+            href="#main"
+          >
+            Skip to content
+          </a>
           <Header />
-          <Outlet />
+          <main className="overflow-y-auto" id="main">
+            <Outlet />
+          </main>
         </div>
         <Toaster richColors />
       </ThemeProvider>

@@ -182,12 +182,20 @@ export function EmployeeForm({
                 <div className="space-y-1.5">
                   <Label htmlFor={field.name}>{f.label}</Label>
                   <Input
+                    autoComplete="off"
+                    className={
+                      f.name === "countryCode" || f.name === "currency"
+                        ? "uppercase placeholder:normal-case"
+                        : undefined
+                    }
                     id={field.name}
+                    inputMode={f.name === "salary" ? "decimal" : undefined}
                     maxLength={"maxLength" in f ? f.maxLength : undefined}
                     name={field.name}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
                     placeholder={"placeholder" in f ? f.placeholder : undefined}
+                    spellCheck={false}
                     type={f.type}
                     value={field.state.value as string}
                   />

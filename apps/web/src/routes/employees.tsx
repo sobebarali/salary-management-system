@@ -8,6 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@salary-management-system/ui/components/alert-dialog";
+import { Badge } from "@salary-management-system/ui/components/badge";
 import { Button } from "@salary-management-system/ui/components/button";
 import { Input } from "@salary-management-system/ui/components/input";
 import { Label } from "@salary-management-system/ui/components/label";
@@ -42,7 +43,7 @@ import { Combobox } from "@/components/combobox";
 import { EmployeeForm } from "@/components/employee-form";
 import { authClient } from "@/lib/auth-client";
 import { formatMoney } from "@/lib/money";
-import type { Employee, SortOption } from "@/lib/types";
+import type { Employee, EmploymentType, SortOption } from "@/lib/types";
 import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/employees")({
@@ -64,6 +65,19 @@ const sortLabels: Record<SortOption, string> = {
   salary_asc: "Salary low–high",
   salary_desc: "Salary high–low",
 };
+
+const employmentTypeLabels: Record<EmploymentType, string> = {
+  full_time: "Full-time",
+  part_time: "Part-time",
+  contract: "Contract",
+  intern: "Intern",
+};
+
+const RIGHT_ALIGNED_COLUMNS = new Set(["salary"]);
+
+function cellAlignClass(columnId: string): string {
+  return RIGHT_ALIGNED_COLUMNS.has(columnId) ? "text-right tabular-nums" : "";
+}
 
 function EmployeesPage() {
   const queryClient = useQueryClient();
@@ -116,22 +130,42 @@ function EmployeesPage() {
         id: "name",
         header: "Name",
         accessorFn: (row) => `${row.firstName} ${row.lastName}`,
+        cell: ({ getValue }) => (
+          <span className="font-medium">{getValue<string>()}</span>
+        ),
       },
       { accessorKey: "jobTitle", header: "Job title" },
+      {
+        accessorKey: "department",
+        header: "Department",
+        cell: ({ getValue }) =>
+          getValue<string | null>() ?? (
+            <span className="text-muted-foreground">—</span>
+          ),
+      },
       { accessorKey: "countryCode", header: "Country" },
+      {
+        id: "type",
+        header: "Type",
+        cell: ({ row }) => (
+          <Badge variant="secondary">
+            {employmentTypeLabels[row.original.employmentType]}
+          </Badge>
+        ),
+      },
       {
         id: "salary",
         header: "Salary",
         cell: ({ row }) =>
           formatMoney(row.original.salary, row.original.currency),
       },
-      { accessorKey: "department", header: "Department" },
       {
         id: "actions",
         header: "",
         cell: ({ row }) => (
           <div className="flex justify-end gap-1">
             <Button
+              aria-label={`Edit ${row.original.firstName} ${row.original.lastName}`}
               onClick={() => {
                 setEditing(row.original);
                 setFormOpen(true);
@@ -139,16 +173,15 @@ function EmployeesPage() {
               size="icon-sm"
               variant="ghost"
             >
-              <PencilIcon />
-              <span className="sr-only">Edit</span>
+              <PencilIcon aria-hidden="true" />
             </Button>
             <Button
+              aria-label={`Delete ${row.original.firstName} ${row.original.lastName}`}
               onClick={() => setDeleting(row.original)}
               size="icon-sm"
               variant="ghost"
             >
-              <Trash2Icon />
-              <span className="sr-only">Delete</span>
+              <Trash2Icon aria-hidden="true" />
             </Button>
           </div>
         ),
@@ -160,6 +193,8 @@ function EmployeesPage() {
   const rows = listQuery.data?.rows ?? [];
   const total = listQuery.data?.total ?? 0;
   const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const rangeStart = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min(page * PAGE_SIZE, total);
 
   const table = useReactTable({
     data: rows,
@@ -197,7 +232,7 @@ function EmployeesPage() {
     body = table.getRowModel().rows.map((row) => (
       <TableRow key={row.id}>
         {row.getVisibleCells().map((cell) => (
-          <TableCell key={cell.id}>
+          <TableCell className={cellAlignClass(cell.column.id)} key={cell.id}>
             {flexRender(cell.column.columnDef.cell, cell.getContext())}
           </TableCell>
         ))}
@@ -207,8 +242,13 @@ function EmployeesPage() {
 
   return (
     <div className="container mx-auto flex flex-col gap-4 px-4 py-4">
-      <div className="flex items-center justify-between">
-        <h1 className="font-semibold text-xl">Employees</h1>
+      <div className="flex items-center justify-between gap-4">
+        <div className="space-y-0.5">
+          <h1 className="font-semibold text-xl tracking-tight">Employees</h1>
+          <p className="text-muted-foreground text-sm">
+            Search, filter, and manage your organization's roster.
+          </p>
+        </div>
         <Button
           onClick={() => {
             setEditing(undefined);
@@ -219,14 +259,17 @@ function EmployeesPage() {
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-end gap-3">
+      <div className="flex flex-wrap items-end gap-3 border bg-muted/20 p-3">
         <div className="space-y-1.5">
           <Label htmlFor="employee-search">Search name</Label>
           <Input
+            autoComplete="off"
             className="w-52"
             id="employee-search"
             onChange={(e) => onFilterChange(setSearch, e.target.value)}
-            placeholder="First or last name"
+            placeholder="Search by name…"
+            spellCheck={false}
+            type="search"
             value={search}
           />
         </div>
@@ -277,9 +320,12 @@ function EmployeesPage() {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((group) => (
-              <TableRow key={group.id}>
+              <TableRow className="bg-muted/50" key={group.id}>
                 {group.headers.map((head) => (
-                  <TableHead key={head.id}>
+                  <TableHead
+                    className={cellAlignClass(head.column.id)}
+                    key={head.id}
+                  >
                     {head.isPlaceholder
                       ? null
                       : flexRender(
@@ -295,8 +341,11 @@ function EmployeesPage() {
         </Table>
       </div>
 
-      <div className="flex items-center justify-between">
-        <p className="text-muted-foreground text-sm">{total} employees</p>
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-muted-foreground text-sm tabular-nums">
+          Showing {rangeStart.toLocaleString()}–{rangeEnd.toLocaleString()} of{" "}
+          {total.toLocaleString()}
+        </p>
         <div className="flex items-center gap-2">
           <Button
             disabled={page <= 1}
@@ -306,7 +355,7 @@ function EmployeesPage() {
           >
             Previous
           </Button>
-          <span className="text-sm">
+          <span className="text-sm tabular-nums">
             Page {page} of {pageCount}
           </span>
           <Button
