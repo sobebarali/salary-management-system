@@ -50,4 +50,31 @@ describe("employees router", () => {
       ).rejects.toMatchObject({ code: "NOT_FOUND" });
     });
   });
+
+  describe("update", () => {
+    it("patches only the provided fields, leaving the rest untouched", async () => {
+      const created = await caller.employees.create({
+        ...validInput,
+        currency: "EUR",
+      });
+
+      const updated = await caller.employees.update({
+        id: created.id,
+        salary: 9_000_000,
+      });
+
+      expect(updated.salary).toBe(9_000_000);
+      expect(updated.currency).toBe("EUR");
+      expect(updated.firstName).toBe("Ada");
+    });
+
+    it("throws NOT_FOUND for an unknown id", async () => {
+      await expect(
+        caller.employees.update({
+          id: "00000000-0000-0000-0000-000000000000",
+          salary: 1,
+        })
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+  });
 });
