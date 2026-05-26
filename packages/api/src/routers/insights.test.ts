@@ -150,4 +150,15 @@ describe("insights router", () => {
       });
     });
   });
+
+  describe("salaryByCountry", () => {
+    it("returns avg and headcount per country, ordered by headcount", async () => {
+      const rows = await caller.insights.salaryByCountry({});
+
+      expect(rows).toEqual([
+        { country: "US", avg: 9_600_000, headcount: 5 },
+        { country: "DE", avg: 13_000_000, headcount: 3 },
+      ]);
+    });
+  });
 });
