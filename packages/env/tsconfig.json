@@ -1,0 +1,6 @@
+{
+  "extends": "@salary-management-system/config/tsconfig.base.json",
+  "compilerOptions": {
+    "strictNullChecks": true
+  }
+}
