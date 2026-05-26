@@ -103,6 +103,7 @@
         "@salary-management-system/db": "workspace:*",
         "@salary-management-system/env": "workspace:*",
         "dotenv": "catalog:",
+        "drizzle-orm": "^0.45.1",
         "zod": "catalog:",
       },
       "devDependencies": {
