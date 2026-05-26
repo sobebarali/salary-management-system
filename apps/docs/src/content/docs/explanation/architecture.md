@@ -177,5 +177,6 @@ A read from the employee list, end to end:
 - ✅ Monorepo, Turborepo pipeline, server bootstrap, CORS, logging.
 - ✅ Better-Auth (email/password) with Drizzle adapter; `user/session/account/verification` tables.
 - ✅ oRPC wired with demo procedures (`healthCheck`, `privateData`).
-- 🟡 Employee schema, employee CRUD + insights procedures, the UI, and the seed script
-  (specified in the Design and Engineering sections).
+- ✅ Employee schema, and the `employees` CRUD + `insights` procedures, with integration tests
+  against a real PostgreSQL.
+- 🟡 The web UI and the 10k seed script (specified in the Design and Engineering sections).

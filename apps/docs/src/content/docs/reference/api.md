@@ -8,9 +8,9 @@ The API contract: procedures, inputs, outputs, errors. Look things up here; don'
 :::
 
 > Status: ✅ The oRPC plumbing (`publicProcedure`, `protectedProcedure`, context, both handlers)
-> exists, and the `insights` router below is implemented in `packages/api/src/routers/insights.ts`
-> (covered by integration tests against a real Postgres). 🟡 The `employees` router is still the
-> procedures to implement.
+> exists, and the `employees` and `insights` routers below are implemented in
+> `packages/api/src/routers/` — both covered by integration tests against a real Postgres. The web
+> UI that consumes them is still 🟡 designed.
 
 ## Conventions
 
@@ -52,7 +52,7 @@ const employeeInput = z.object({
 });
 ```
 
-## `employees` router 🟡
+## `employees` router ✅
 
 | Procedure | Kind | Input | Returns |
 | --- | --- | --- | --- |
