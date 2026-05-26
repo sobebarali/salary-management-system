@@ -80,13 +80,13 @@ the workspace.
 | `bun run db:studio` | Open Drizzle Studio (DB browser UI). |
 | `bun run db:start` / `db:stop` / `db:down` | Manage the local database instance lifecycle. |
 | `bun run db:watch` | Watch mode for local DB. |
-| `bun run db:seed` | 🟡 *To be added* — clears and seeds 10,000 employees (see [How-to: Seed](/how-to/seed/)). |
+| `bun run db:seed` | ✅ Clears and seeds 10,000 employees deterministically (see [How-to: Seed](/how-to/seed/)). |
 
 ### Testing
 
 | Script | What it does |
 | --- | --- |
-| `bun run test` | Run the Vitest suites across the workspace (`turbo test`). Currently the `packages/db` integration specs — needs a reachable PostgreSQL (see `TEST_DATABASE_URL`). |
+| `bun run test` | Run the Vitest suites across the workspace (`turbo test`). The `packages/db` and `packages/api` integration specs — needs a reachable PostgreSQL (see `TEST_DATABASE_URL`). |
 
 ### Code quality
 

@@ -36,6 +36,7 @@
     "db:studio": "turbo -F @salary-management-system/db db:studio",
     "db:generate": "turbo -F @salary-management-system/db db:generate",
     "db:migrate": "turbo -F @salary-management-system/db db:migrate",
+    "db:seed": "turbo -F @salary-management-system/db db:seed",
     "db:start": "turbo -F @salary-management-system/db db:start",
     "db:watch": "turbo -F @salary-management-system/db db:watch",
     "db:stop": "turbo -F @salary-management-system/db db:stop",
