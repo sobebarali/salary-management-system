@@ -73,4 +73,29 @@ export const insightsRouter = {
         .groupBy(employee.countryCode)
         .orderBy(sql`count(*) desc`)
   ),
+
+  topJobTitles: protectedProcedure
+    .input(
+      z.object({
+        country: countryCode.optional(),
+        limit: z.number().int().min(1).max(50).default(10),
+      })
+    )
+    .handler(
+      async ({ context, input }) =>
+        await context.db
+          .select({
+            jobTitle: employee.jobTitle,
+            avg: sql<number>`round(avg(${employee.salary}))::int`,
+            headcount: sql<number>`count(*)::int`,
+          })
+          .from(employee)
+          .where(
+            input.country ? eq(employee.countryCode, input.country) : undefined
+          )
+          .groupBy(employee.jobTitle)
+          .having(sql`count(*) >= 3`)
+          .orderBy(sql`round(avg(${employee.salary})) desc`)
+          .limit(input.limit)
+    ),
 };
