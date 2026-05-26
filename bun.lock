@@ -109,6 +109,7 @@
         "@salary-management-system/config": "workspace:*",
         "hono": "catalog:",
         "typescript": "catalog:",
+        "vitest": "catalog:",
       },
     },
     "packages/auth": {
