@@ -7,8 +7,9 @@ test("sign up, add an employee, and see it reflected in insights", async ({
 }) => {
   const email = `e2e+${Date.now()}@example.com`;
 
-  // The /login route shows the sign-up form by default.
+  // The /login route shows the sign-in form by default; switch to sign-up.
   await page.goto("/login");
+  await page.getByRole("button", { name: "Sign up" }).click();
   await page.getByLabel("Name").fill("HR Manager");
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill("password123");

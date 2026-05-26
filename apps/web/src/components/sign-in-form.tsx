@@ -1,4 +1,10 @@
 import { Button } from "@salary-management-system/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@salary-management-system/ui/components/card";
 import { Input } from "@salary-management-system/ui/components/input";
 import { Label } from "@salary-management-system/ui/components/label";
 import { useForm } from "@tanstack/react-form";
@@ -57,90 +63,110 @@ export default function SignInForm({
   }
 
   return (
-    <div className="mx-auto mt-10 w-full max-w-md p-6">
-      <h1 className="mb-6 text-center font-bold text-3xl">Welcome Back</h1>
+    <div className="flex min-h-full items-center justify-center p-4">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <h1 className="font-semibold text-base tracking-tight">
+            Welcome back
+          </h1>
+          <p className="text-muted-foreground text-xs">
+            Sign in to manage your organization.
+          </p>
+        </CardHeader>
 
-      <form
-        className="space-y-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-      >
-        <div>
-          <form.Field name="email">
-            {(field) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Email</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  type="email"
-                  value={field.state.value}
-                />
-                {field.state.meta.errors.map((error) => (
-                  <p className="text-red-500" key={error?.message}>
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </form.Field>
-        </div>
+        <CardContent>
+          <form
+            className="space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              form.handleSubmit();
+            }}
+          >
+            <form.Field name="email">
+              {(field) => (
+                <div className="space-y-1.5">
+                  <Label htmlFor={field.name}>Email</Label>
+                  <Input
+                    autoComplete="email"
+                    id={field.name}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="you@company.com"
+                    spellCheck={false}
+                    type="email"
+                    value={field.state.value}
+                  />
+                  {field.state.meta.errors.map((error) => (
+                    <p
+                      className="text-destructive text-xs"
+                      key={error?.message}
+                    >
+                      {error?.message}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </form.Field>
 
-        <div>
-          <form.Field name="password">
-            {(field) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Password</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  type="password"
-                  value={field.state.value}
-                />
-                {field.state.meta.errors.map((error) => (
-                  <p className="text-red-500" key={error?.message}>
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </form.Field>
-        </div>
+            <form.Field name="password">
+              {(field) => (
+                <div className="space-y-1.5">
+                  <Label htmlFor={field.name}>Password</Label>
+                  <Input
+                    autoComplete="current-password"
+                    id={field.name}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    type="password"
+                    value={field.state.value}
+                  />
+                  {field.state.meta.errors.map((error) => (
+                    <p
+                      className="text-destructive text-xs"
+                      key={error?.message}
+                    >
+                      {error?.message}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </form.Field>
 
-        <form.Subscribe
-          selector={(state) => ({
-            canSubmit: state.canSubmit,
-            isSubmitting: state.isSubmitting,
-          })}
-        >
-          {({ canSubmit, isSubmitting }) => (
-            <Button
-              className="w-full"
-              disabled={!canSubmit || isSubmitting}
-              type="submit"
+            <form.Subscribe
+              selector={(state) => ({
+                canSubmit: state.canSubmit,
+                isSubmitting: state.isSubmitting,
+              })}
             >
-              {isSubmitting ? "Submitting..." : "Sign In"}
-            </Button>
-          )}
-        </form.Subscribe>
-      </form>
+              {({ canSubmit, isSubmitting }) => (
+                <Button
+                  className="w-full"
+                  disabled={!canSubmit || isSubmitting}
+                  type="submit"
+                >
+                  {isSubmitting ? "Signing in…" : "Sign In"}
+                </Button>
+              )}
+            </form.Subscribe>
+          </form>
+        </CardContent>
 
-      <div className="mt-4 text-center">
-        <Button
-          className="text-indigo-600 hover:text-indigo-800"
-          onClick={onSwitchToSignUp}
-          variant="link"
-        >
-          Need an account? Sign Up
-        </Button>
-      </div>
+        <CardFooter className="justify-center">
+          <p className="text-muted-foreground text-xs">
+            Need an account?{" "}
+            <Button
+              className="h-auto p-0 text-xs"
+              onClick={onSwitchToSignUp}
+              variant="link"
+            >
+              Sign up
+            </Button>
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   );
 }
