@@ -8,7 +8,9 @@ The reasoning behind *what* we test and *why*. Commands to run tests are in
 [Configuration & Scripts](/reference/configuration/).
 :::
 
-> Status: 🟡 **Designed.** Vitest is the intended runner (fits the Vite/Bun toolchain).
+> Status: 🟡 **In progress.** Vitest is wired up (it fits the Vite/Bun toolchain), and the first
+> integration specs — the `employee` data model against a real PostgreSQL — are ✅ in
+> `packages/db`. The insight/procedure/seed and e2e layers below are still 🟡 designed.
 
 The assignment asks for a **meaningful** set of tests that are **fast, deterministic, and easy to
 understand** — not coverage theatre. So we test the parts where bugs would actually hurt the HR
@@ -105,5 +107,8 @@ layers already cover the branches.
 ```bash
 bun run check-types     # turbo: tsc across all packages
 bun run check           # ultracite/biome lint + format check
-bun test                # 🟡 vitest, once specs land
+bun run test            # vitest (turbo test) — needs a reachable Postgres for the db specs
 ```
+
+The `packages/db` integration specs create and migrate a disposable test database; point them at
+one with `TEST_DATABASE_URL` (see [Configuration](/reference/configuration/)).

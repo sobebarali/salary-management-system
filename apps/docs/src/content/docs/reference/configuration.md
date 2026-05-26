@@ -38,6 +38,23 @@ Schema: `packages/env/src/web.ts`. Client vars **must** be prefixed `VITE_` to b
 set a real value or remove the line.
 :::
 
+### Test runner — `TEST_DATABASE_URL` (optional)
+
+The `packages/db` integration tests connect to a **separate, disposable** PostgreSQL database
+(the harness creates it if missing and applies migrations to it). Point them at it with
+`TEST_DATABASE_URL`; if unset it defaults to
+`postgresql://postgres:password@localhost:5432/salary_management_test`.
+
+| Variable | Type / rule | Purpose |
+| --- | --- | --- |
+| `TEST_DATABASE_URL` | connection string, optional | Database the Vitest harness creates/migrates and runs the data-model specs against. |
+
+:::note
+This is **test-tooling** configuration consumed directly by the test client — it is deliberately
+**not** in the `packages/env` schema, because that schema validates *application runtime* env and
+would otherwise force the var to be present at app startup.
+:::
+
 ## Workspace scripts
 
 Run from the repo root (defined in the root `package.json`). Turborepo orchestrates them across
@@ -64,6 +81,12 @@ the workspace.
 | `bun run db:start` / `db:stop` / `db:down` | Manage the local database instance lifecycle. |
 | `bun run db:watch` | Watch mode for local DB. |
 | `bun run db:seed` | 🟡 *To be added* — clears and seeds 10,000 employees (see [How-to: Seed](/how-to/seed/)). |
+
+### Testing
+
+| Script | What it does |
+| --- | --- |
+| `bun run test` | Run the Vitest suites across the workspace (`turbo test`). Currently the `packages/db` integration specs — needs a reachable PostgreSQL (see `TEST_DATABASE_URL`). |
 
 ### Code quality
 
