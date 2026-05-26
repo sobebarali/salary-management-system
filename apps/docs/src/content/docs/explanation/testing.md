@@ -10,8 +10,8 @@ The reasoning behind *what* we test and *why*. Commands to run tests are in
 
 > Status: 🟡 **In progress.** Vitest is wired up (it fits the Vite/Bun toolchain). The `employee`
 > data model (`packages/db`) and the `employees` CRUD + `insights` procedures (`packages/api`,
-> driven against a real PostgreSQL through a typed oRPC caller) are ✅. The seed and e2e layers
-> below are still 🟡 designed.
+> driven against a real PostgreSQL through a typed oRPC caller) are ✅, as is the seed (a pure
+> deterministic generator plus a batched, idempotent insert). The e2e layer below is still 🟡 designed.
 
 The assignment asks for a **meaningful** set of tests that are **fast, deterministic, and easy to
 understand** — not coverage theatre. So we test the parts where bugs would actually hurt the HR

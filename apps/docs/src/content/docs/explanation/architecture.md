@@ -179,4 +179,5 @@ A read from the employee list, end to end:
 - ✅ oRPC wired with demo procedures (`healthCheck`, `privateData`).
 - ✅ Employee schema, and the `employees` CRUD + `insights` procedures, with integration tests
   against a real PostgreSQL.
-- 🟡 The web UI and the 10k seed script (specified in the Design and Engineering sections).
+- ✅ The fast, deterministic 10k seed script (`bun run db:seed`).
+- 🟡 The web UI (specified in the Design and Engineering sections).
