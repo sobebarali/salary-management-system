@@ -8,9 +8,8 @@ Precise metric definitions and the SQL that computes them. The *why* (mean vs. m
 called out inline but the design rationale lives in [Explanation → Decisions](/explanation/decisions/).
 :::
 
-> Status: ✅ **Implemented** (metrics 1–5) — backs the `insights` router in the
-> [API](/reference/api/). The salary-distribution histogram (metric 6) is 🟡 **designed**: the SQL
-> is specified below but no procedure exposes it yet.
+> Status: ✅ **Implemented** (metrics 1–6) — backs the `insights` router in the
+> [API](/reference/api/), each covered by integration tests against a real Postgres.
 
 Every metric is computed **in PostgreSQL**, not in JavaScript. The database is built for
 aggregation, the math stays correct on large sets, and we never pull 10k rows into the server
@@ -88,7 +87,7 @@ LIMIT $2;
 The `HAVING count(*) >= 3` guard prevents a single highly-paid person from topping the chart as a
 "job title" of one — a small but important correctness detail for averages.
 
-### 6. Salary distribution (histogram) 🟡
+### 6. Salary distribution (histogram) ✅
 
 ```sql
 SELECT width_bucket(salary, 0, 30000000, 10) AS bucket, count(*)
@@ -98,7 +97,9 @@ GROUP BY bucket
 ORDER BY bucket;
 ```
 
-Lets the UI render a distribution chart so Priya sees *shape*, not just a single number.
+Lets the UI render a distribution chart so Priya sees *shape*, not just a single number. The
+fixed range spans 0–30,000,000 minor units in ten buckets; only buckets that contain employees
+come back, so the chart fills any gaps.
 
 `★ Insight ─────────────────────────────────────`
 - **Mean vs. median is a product decision, not just a stat.** Reporting only the average would

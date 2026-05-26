@@ -100,4 +100,17 @@ export const insightsRouter = {
           .orderBy(sql`round(avg(${employee.salary})) desc`)
           .limit(input.limit)
     ),
+
+  histogram: protectedProcedure
+    .input(z.object({ country: countryCode }))
+    .handler(async ({ context, input }) => {
+      const bucket = sql<number>`width_bucket(${employee.salary}, 0, 30000000, 10)::int`;
+
+      return await context.db
+        .select({ bucket, count: sql<number>`count(*)::int` })
+        .from(employee)
+        .where(eq(employee.countryCode, input.country))
+        .groupBy(bucket)
+        .orderBy(bucket);
+    }),
 };

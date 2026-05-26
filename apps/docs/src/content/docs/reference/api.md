@@ -110,6 +110,7 @@ see [Salary Metrics](/reference/salary-metrics/) for the SQL and metric definiti
 | `insights.overview` | `{}` | `{ totalEmployees, countries, currency }` |
 | `insights.salaryByCountry` | `{}` | `Array<{ country, avg, headcount }>` (for the dashboard) |
 | `insights.topJobTitles` | `{ country?, limit }` | `Array<{ jobTitle, avg, headcount }>` |
+| `insights.histogram` | `{ country }` | `Array<{ bucket, count }>` (salary distribution) |
 
 All monetary fields come back as **integer minor units** in the row's `currency`; the UI formats
 them. Mixed-currency averages are addressed in [Salary Metrics](/reference/salary-metrics/#a-note-on-currency).
