@@ -1,13 +1,22 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 
 import { ModeToggle } from "./mode-toggle";
 import UserMenu from "./user-menu";
 
 export default function Header() {
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+
   const links = [
     { to: "/employees", label: "Employees" },
     { to: "/insights", label: "Insights" },
   ] as const;
+
+  // The login screen is the only unauthenticated surface; it gets no app chrome.
+  if (pathname === "/login") {
+    return null;
+  }
 
   return (
     <header className="border-b">
