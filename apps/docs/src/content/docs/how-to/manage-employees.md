@@ -9,8 +9,8 @@ Goal-oriented recipes. Each assumes the app is running and you're signed in
 [Frontend & UX](/explanation/frontend/).
 :::
 
-> Status: 🟡 The Employees and Insights screens are designed, not yet built. The steps below
-> describe the intended flows.
+> Status: ✅ The Employees screen is built. 🟡 The Insights screen is still designed, not yet
+> built — those steps describe the intended flow.
 
 ## Add an employee
 
@@ -25,7 +25,7 @@ Goal-oriented recipes. Each assumes the app is running and you're signed in
 
 1. In the Employees list, find the row (use filters/search below).
 2. Click the row's **Edit** action.
-3. Change any field — only what you change is sent (a partial update).
+3. Change any field in the pre-filled form.
 4. **Save**. Affected insights update immediately.
 
 ## Delete an employee

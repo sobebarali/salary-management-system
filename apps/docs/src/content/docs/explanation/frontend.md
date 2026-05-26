@@ -8,9 +8,9 @@ How the UI is shaped and why. Step-by-step usage lives in
 [How-to: Manage employees](/how-to/manage-employees/).
 :::
 
-> Status: ✅ Auth screens (sign-in / sign-up), routing, theming, and the oRPC+TanStack Query
-> client are in place. 🟡 The Employees and Insights screens below are to be built in
-> `apps/web/src/routes/`.
+> Status: ✅ Auth screens (sign-in / sign-up), routing, theming, the oRPC+TanStack Query
+> client, and the Employees screen (`/employees`) are in place. 🟡 The Insights dashboard below
+> is still to be built in `apps/web/src/routes/`.
 
 ## Stack
 
@@ -37,15 +37,15 @@ beforeLoad: async () => {
 
 All employee/insight routes reuse this guard.
 
-### Employees list — `/employees` 🟡
+### Employees list — `/employees` ✅
 
 The primary workspace. A shadcn **Data Table** over `employees.list`:
 
-- **Server-side pagination** (page / pageSize controls) — never renders 10k rows.
-- **Filters**: country (select), job title (combobox), free-text name search — each maps to a
-  `employees.list` input field and refetches.
+- **Server-side pagination** (Previous / Next over a fixed page size) — never renders 10k rows.
+- **Filters**: country and job title (searchable comboboxes sourced from the insights router),
+  free-text name search — each maps to an `employees.list` input field and refetches from page 1.
 - **Sort**: by name or salary, server-side.
-- **Row actions**: edit (opens dialog), delete (confirm dialog).
+- **Row actions**: edit (opens dialog), delete (confirm alert dialog).
 - **"Add employee"** opens the same form dialog in create mode.
 
 ```tsx
@@ -54,7 +54,7 @@ const { data } = useQuery(
 );
 ```
 
-### Employee form (create / edit) 🟡
+### Employee form (create / edit) ✅
 
 A single `<EmployeeForm>` in a dialog, driven by **TanStack React Form** + the shared Zod schema
 (reused from the API — one validation definition, client and server). On submit it calls
