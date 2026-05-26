@@ -46,4 +46,18 @@ export const insightsRouter = {
 
       return row;
     }),
+
+  overview: protectedProcedure.handler(async ({ context }) => {
+    const [row] = await context.db
+      .select({
+        totalEmployees: sql<number>`count(*)::int`,
+        countries: sql<number>`count(distinct ${employee.countryCode})::int`,
+        currency: sql<
+          string | null
+        >`mode() within group (order by ${employee.currency})`,
+      })
+      .from(employee);
+
+    return row;
+  }),
 };
