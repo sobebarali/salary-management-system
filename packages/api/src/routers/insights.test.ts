@@ -114,4 +114,28 @@ describe("insights router", () => {
       expect(us.headcount).toBe(5);
     });
   });
+
+  describe("jobTitleInCountry", () => {
+    it("returns avg/median/headcount for a job title within a country", async () => {
+      const analysts = await caller.insights.jobTitleInCountry({
+        country: "US",
+        jobTitle: "Analyst",
+      });
+
+      expect(analysts).toEqual({
+        avg: 8_000_000,
+        median: 8_000_000,
+        headcount: 3,
+      });
+    });
+
+    it("reports a zero headcount when the pairing has no employees", async () => {
+      const result = await caller.insights.jobTitleInCountry({
+        country: "US",
+        jobTitle: "Manager",
+      });
+
+      expect(result.headcount).toBe(0);
+    });
+  });
 });
