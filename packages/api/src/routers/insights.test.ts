@@ -138,4 +138,16 @@ describe("insights router", () => {
       expect(result.headcount).toBe(0);
     });
   });
+
+  describe("overview", () => {
+    it("summarizes headcount, distinct countries, and the dominant currency", async () => {
+      const overview = await caller.insights.overview({});
+
+      expect(overview).toEqual({
+        totalEmployees: 8,
+        countries: 2,
+        currency: "USD",
+      });
+    });
+  });
 });
