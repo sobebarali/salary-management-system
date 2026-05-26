@@ -60,4 +60,17 @@ export const insightsRouter = {
 
     return row;
   }),
+
+  salaryByCountry: protectedProcedure.handler(
+    async ({ context }) =>
+      await context.db
+        .select({
+          country: employee.countryCode,
+          avg: sql<number>`round(avg(${employee.salary}))::int`,
+          headcount: sql<number>`count(*)::int`,
+        })
+        .from(employee)
+        .groupBy(employee.countryCode)
+        .orderBy(sql`count(*) desc`)
+  ),
 };
