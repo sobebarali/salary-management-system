@@ -40,7 +40,15 @@ const histogramChartConfig = {
   count: { label: "Employees", color: "var(--chart-2)" },
 } satisfies ChartConfig;
 
-function StatCard({ label, value }: { label: string; value: string }) {
+function StatCard({
+  label,
+  value,
+  testId,
+}: {
+  label: string;
+  value: string;
+  testId?: string;
+}) {
   return (
     <Card>
       <CardHeader className="pb-1">
@@ -48,7 +56,9 @@ function StatCard({ label, value }: { label: string; value: string }) {
           {label}
         </CardTitle>
       </CardHeader>
-      <CardContent className="font-semibold text-lg">{value}</CardContent>
+      <CardContent className="font-semibold text-lg" data-testid={testId}>
+        {value}
+      </CardContent>
     </Card>
   );
 }
@@ -116,10 +126,12 @@ function InsightsPage() {
       <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <StatCard
           label="Total employees"
+          testId="overview-total-employees"
           value={overview.data?.totalEmployees.toLocaleString() ?? "—"}
         />
         <StatCard
           label="Countries"
+          testId="overview-countries"
           value={overview.data?.countries.toLocaleString() ?? "—"}
         />
         <StatCard

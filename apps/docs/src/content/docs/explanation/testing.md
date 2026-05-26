@@ -8,10 +8,10 @@ The reasoning behind *what* we test and *why*. Commands to run tests are in
 [Configuration & Scripts](/reference/configuration/).
 :::
 
-> Status: 🟡 **In progress.** Vitest is wired up (it fits the Vite/Bun toolchain). The `employee`
-> data model (`packages/db`) and the `employees` CRUD + `insights` procedures (`packages/api`,
-> driven against a real PostgreSQL through a typed oRPC caller) are ✅, as is the seed (a pure
-> deterministic generator plus a batched, idempotent insert). The e2e layer below is still 🟡 designed.
+> Status: ✅ **Implemented.** Vitest covers the unit + integration layers — the `employee` data
+> model (`packages/db`), the `employees` CRUD + `insights` procedures (`packages/api`, driven
+> against a real PostgreSQL through a typed oRPC caller), money conversion (`apps/web`), and the
+> deterministic, batched seed. The Playwright golden-path e2e (below) is now in place too.
 
 The assignment asks for a **meaningful** set of tests that are **fast, deterministic, and easy to
 understand** — not coverage theatre. So we test the parts where bugs would actually hurt the HR
@@ -91,11 +91,17 @@ known, asserted answer.
   *easy to understand* and non-flaky.
 `─────────────────────────────────────────────────`
 
-## 3. End-to-end — the golden path
+## 3. End-to-end — the golden path ✅
 
-A thin set covering the one journey that proves the product works: **sign in → add an employee →
-the insights dashboard reflects the new salary**. Kept few and high-value; the unit/integration
-layers already cover the branches.
+A single Playwright test (`apps/web/e2e/golden-path.spec.ts`) covers the one journey that proves
+the product works end to end: **sign up → add an employee → the insights dashboard reflects the new
+roster**. Kept to one high-value flow; the unit/integration layers already cover the branches.
+
+Determinism comes from a **dedicated, reset-each-run database**: `playwright.config.ts` starts the
+API server (with `DATABASE_URL` pointed at `salary_management_e2e`) and the web app, and a
+`globalSetup` creates, pushes the schema to, and truncates that database before the run. So after
+adding one employee the dashboard asserts exactly one employee in one country — an exact value, not
+a fuzzy range. The suite owns ports `3000`/`3001`, so the dev stack must be stopped while it runs.
 
 ## What we deliberately don't test
 
@@ -106,10 +112,12 @@ layers already cover the branches.
 ## Running
 
 ```bash
-bun run check-types     # turbo: tsc across all packages
-bun run check           # ultracite/biome lint + format check
-bun run test            # vitest (turbo test) — needs a reachable Postgres for the db specs
+bun run check-types          # turbo: tsc across all packages
+bun run check                # ultracite/biome lint + format check
+bun run test                 # vitest (turbo test) — needs a reachable Postgres for the db specs
+bun run --filter web test:e2e  # Playwright golden path (stop the dev stack first; ports 3000/3001)
 ```
 
 The `packages/db` integration specs create and migrate a disposable test database; point them at
-one with `TEST_DATABASE_URL` (see [Configuration](/reference/configuration/)).
+one with `TEST_DATABASE_URL` (see [Configuration](/reference/configuration/)). The Playwright suite
+manages its own `salary_management_e2e` database and starts both servers itself.

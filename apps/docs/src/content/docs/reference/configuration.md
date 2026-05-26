@@ -87,6 +87,7 @@ the workspace.
 | Script | What it does |
 | --- | --- |
 | `bun run test` | Run the Vitest suites across the workspace (`turbo test`). The `packages/db` and `packages/api` integration specs — needs a reachable PostgreSQL (see `TEST_DATABASE_URL`). |
+| `bun run --filter web test:e2e` | Run the Playwright golden-path e2e. Starts both servers and manages a dedicated `salary_management_e2e` database; the dev stack must be stopped (it owns ports `3000`/`3001`). |
 
 ### Code quality
 
