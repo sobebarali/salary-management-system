@@ -77,4 +77,23 @@ describe("employees router", () => {
       ).rejects.toMatchObject({ code: "NOT_FOUND" });
     });
   });
+
+  describe("delete", () => {
+    it("removes the employee and returns its id", async () => {
+      const created = await caller.employees.create(validInput);
+
+      const result = await caller.employees.delete({ id: created.id });
+
+      expect(result).toEqual({ id: created.id });
+      await expect(
+        caller.employees.get({ id: created.id })
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+
+    it("throws NOT_FOUND for an unknown id", async () => {
+      await expect(
+        caller.employees.delete({ id: "00000000-0000-0000-0000-000000000000" })
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+  });
 });
