@@ -1,4 +1,5 @@
 import { auth } from "@salary-management-system/auth";
+import { db } from "@salary-management-system/db";
 import type { Context as HonoContext } from "hono";
 
 export interface CreateContextOptions {
@@ -10,8 +11,8 @@ export async function createContext({ context }: CreateContextOptions) {
     headers: context.req.raw.headers,
   });
   return {
-    auth: null,
     session,
+    db,
   };
 }
 

@@ -144,12 +144,12 @@ A read from the employee list, end to end:
         │
         ▼
 [oRPC procedure]  packages/api
-   createContext() → getSession()   → context.session
+   createContext() → getSession()   → context.session + context.db
    protectedProcedure middleware    → 401 if no user
    Zod-validated input
         │
         ▼
-[Drizzle query]  packages/db → PostgreSQL
+[Drizzle query]  context.db → PostgreSQL
    SELECT ... WHERE country = $1 ORDER BY ... LIMIT $2 OFFSET $3
         │
         ▼

@@ -149,3 +149,22 @@ compensation/audit trail, and role-based access control (a single authenticated 
 **Consequences.** Effort concentrates on the required employee management, insights, and a fast
 seed — done well. Each cut is a clean future extension point, not a dead end. See
 [Problem & Goals](/explanation/problem-and-goals/).
+
+---
+
+## ADR-0010 — Inject the database through the oRPC context
+
+**Status:** Accepted ✅
+
+**Context.** Insight and CRUD procedures must be covered by [integration tests against a real
+Postgres](/explanation/testing/). If procedures reached for the `db` singleton (bound to
+`DATABASE_URL`) directly, a test could only swap the database by mutating process-wide env — a
+brittle, order-dependent global.
+
+**Decision.** Carry `db` on the oRPC **context**. `createContext` injects the production singleton;
+the test caller injects a connection to the disposable test database. Procedures read
+`context.db`, never the module-level singleton.
+
+**Consequences.** Procedures are pure with respect to their dependencies, so a typed
+`createRouterClient` caller can drive them against a real test database with no env juggling.
+Cost: one extra field threaded through the context — a small, deliberate seam for testability.
