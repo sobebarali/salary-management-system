@@ -161,4 +161,34 @@ describe("insights router", () => {
       ]);
     });
   });
+
+  describe("topJobTitles", () => {
+    it("ranks job titles by avg, excluding groups smaller than three", async () => {
+      const rows = await caller.insights.topJobTitles({ limit: 10 });
+
+      expect(rows).toEqual([
+        { jobTitle: "Manager", avg: 13_000_000, headcount: 3 },
+        { jobTitle: "Analyst", avg: 8_000_000, headcount: 3 },
+      ]);
+    });
+
+    it("scopes to a country when one is given", async () => {
+      const rows = await caller.insights.topJobTitles({
+        country: "US",
+        limit: 10,
+      });
+
+      expect(rows).toEqual([
+        { jobTitle: "Analyst", avg: 8_000_000, headcount: 3 },
+      ]);
+    });
+
+    it("honors the limit", async () => {
+      const rows = await caller.insights.topJobTitles({ limit: 1 });
+
+      expect(rows).toEqual([
+        { jobTitle: "Manager", avg: 13_000_000, headcount: 3 },
+      ]);
+    });
+  });
 });
