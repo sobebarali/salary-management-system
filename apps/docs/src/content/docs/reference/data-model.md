@@ -8,9 +8,10 @@ Accurate facts to look up: tables, columns, types, indexes. The reasoning lives 
 [Explanation → Decisions](/explanation/decisions/).
 :::
 
-> Status: 🟡 **Designed.** The auth tables (`user`, `session`, `account`, `verification`) are
-> ✅ implemented by Better-Auth. The `employee` table below is the next thing to build, in
-> `packages/db/src/schema/`.
+> Status: ✅ **Implemented.** The auth tables (`user`, `session`, `account`, `verification`) are
+> owned by Better-Auth; the `employee` table below lives in
+> `packages/db/src/schema/employee.ts` and is covered by integration tests against a real
+> PostgreSQL (see [Testing](/explanation/testing/)).
 
 ## The `employee` table
 
