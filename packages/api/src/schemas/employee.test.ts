@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { employeeInput, listInput } from "./employee";
+import { employeeInput, listInput, updateEmployeeInput } from "./employee";
 
 const validEmployee = {
   firstName: "Ada",
@@ -60,5 +60,17 @@ describe("listInput", () => {
 
   it("caps pageSize at 100", () => {
     expect(listInput.safeParse({ pageSize: 101 }).success).toBe(false);
+  });
+});
+
+describe("updateEmployeeInput", () => {
+  it("does not inject defaults for omitted fields", () => {
+    const parsed = updateEmployeeInput.parse({
+      id: "00000000-0000-0000-0000-000000000000",
+      salary: 9_000_000,
+    });
+
+    expect(parsed).not.toHaveProperty("currency");
+    expect(parsed).not.toHaveProperty("employmentType");
   });
 });
