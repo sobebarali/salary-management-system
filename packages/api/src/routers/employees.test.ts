@@ -34,4 +34,20 @@ describe("employees router", () => {
       expect(row.employmentType).toBe("full_time");
     });
   });
+
+  describe("get", () => {
+    it("returns the employee by id", async () => {
+      const created = await caller.employees.create(validInput);
+
+      const fetched = await caller.employees.get({ id: created.id });
+
+      expect(fetched).toEqual(created);
+    });
+
+    it("throws NOT_FOUND for an unknown id", async () => {
+      await expect(
+        caller.employees.get({ id: "00000000-0000-0000-0000-000000000000" })
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    });
+  });
 });
