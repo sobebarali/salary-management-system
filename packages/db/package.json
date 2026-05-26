@@ -17,7 +17,9 @@
     "db:start": "docker compose up -d",
     "db:watch": "docker compose up",
     "db:stop": "docker compose stop",
-    "db:down": "docker compose down"
+    "db:down": "docker compose down",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@salary-management-system/env": "workspace:*",
@@ -30,6 +32,7 @@
     "@salary-management-system/config": "workspace:*",
     "@types/pg": "^8.16.0",
     "drizzle-kit": "^0.31.8",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }
