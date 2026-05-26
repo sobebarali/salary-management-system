@@ -28,5 +28,12 @@ export const listInput = z.object({
     .default("name_asc"),
 });
 
+export const employeeId = z.uuid();
+
+export const updateEmployeeInput = employeeInput
+  .partial()
+  .extend({ id: employeeId });
+
 export type EmployeeInput = z.infer<typeof employeeInput>;
 export type ListInput = z.infer<typeof listInput>;
+export type UpdateEmployeeInput = z.infer<typeof updateEmployeeInput>;
