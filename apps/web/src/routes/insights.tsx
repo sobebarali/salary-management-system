@@ -17,6 +17,7 @@ import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 import { Combobox } from "@/components/combobox";
+import { StatCard } from "@/components/stat-card";
 import { authClient } from "@/lib/auth-client";
 import { formatMoney, toMajorUnits } from "@/lib/money";
 import { orpc } from "@/utils/orpc";
@@ -39,32 +40,6 @@ const salaryChartConfig = {
 const histogramChartConfig = {
   count: { label: "Employees", color: "var(--chart-2)" },
 } satisfies ChartConfig;
-
-function StatCard({
-  label,
-  value,
-  testId,
-}: {
-  label: string;
-  value: string;
-  testId?: string;
-}) {
-  return (
-    <Card>
-      <CardHeader className="pb-1">
-        <CardTitle className="font-normal text-muted-foreground text-xs">
-          {label}
-        </CardTitle>
-      </CardHeader>
-      <CardContent
-        className="font-semibold text-lg tabular-nums"
-        data-testid={testId}
-      >
-        {value}
-      </CardContent>
-    </Card>
-  );
-}
 
 function InsightsPage() {
   const overview = useQuery(orpc.insights.overview.queryOptions());

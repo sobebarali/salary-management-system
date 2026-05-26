@@ -25,7 +25,8 @@ How the UI is shaped and why. Step-by-step usage lives in
 
 ### Authentication ✅
 
-Sign-in / sign-up forms exist. The `/dashboard` route already demonstrates the guard pattern:
+Sign-in / sign-up forms exist; on success the user lands on the Home page. Every protected route
+guards in `beforeLoad`:
 
 ```ts
 beforeLoad: async () => {
@@ -35,7 +36,12 @@ beforeLoad: async () => {
 }
 ```
 
-All employee/insight routes reuse this guard.
+The Home, Employees, and Insights routes all reuse this guard.
+
+### Home — `/` ✅
+
+The landing screen after sign-in: a greeting, three headline cards (total employees, countries,
+dominant currency) from `insights.overview`, and quick-link cards into Employees and Insights.
 
 ### Employees list — `/employees` ✅
 

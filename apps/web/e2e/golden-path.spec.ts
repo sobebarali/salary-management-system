@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const DASHBOARD_URL = /\/dashboard/;
+const HOME_URL = /localhost:3001\/$/;
 
 test("sign up, add an employee, and see it reflected in insights", async ({
   page,
@@ -14,7 +14,7 @@ test("sign up, add an employee, and see it reflected in insights", async ({
   await page.getByLabel("Password").fill("password123");
   await page.getByRole("button", { name: "Sign Up" }).click();
 
-  await expect(page).toHaveURL(DASHBOARD_URL);
+  await expect(page).toHaveURL(HOME_URL);
 
   // Add an employee through the form dialog.
   await page.goto("/employees");
