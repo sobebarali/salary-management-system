@@ -9,8 +9,8 @@ How the UI is shaped and why. Step-by-step usage lives in
 :::
 
 > Status: ✅ Auth screens (sign-in / sign-up), routing, theming, the oRPC+TanStack Query
-> client, and the Employees screen (`/employees`) are in place. 🟡 The Insights dashboard below
-> is still to be built in `apps/web/src/routes/`.
+> client, the Employees screen (`/employees`), and the Insights dashboard (`/insights`) are all
+> in place.
 
 ## Stack
 
@@ -63,14 +63,17 @@ A single `<EmployeeForm>` in a dialog, driven by **TanStack React Form** + the s
 Money input is entered in **major units** ("75000.00") and converted to integer minor units
 before the mutation; display uses `Intl.NumberFormat` with the row's currency.
 
-### Insights dashboard — `/insights` 🟡
+### Insights dashboard — `/insights` ✅
 
 Answers the persona's compensation questions visually:
 
-- **Country panel**: pick a country → min / max / **average** / **median** / headcount cards.
+- **Overview cards**: total employees, distinct countries, and the dominant currency.
+- **Country panel**: pick a country → min / max / **average** / **median** / headcount cards,
+  plus a salary-distribution histogram for that country.
 - **Role-in-country**: pick country + job title → the required "average for a job title in a
-  country" figure, with headcount for context.
-- **Charts**: salary-by-country bar chart, top-paying roles, and a distribution histogram.
+  country" figure, with median and headcount for context.
+- **Charts**: salary-by-country bar chart, top-paying roles, and the per-country distribution
+  histogram (amounts shown in major units; formatting uses the org's dominant currency).
 
 Each card/chart is its own `useQuery` against an `insights.*` procedure, so panels load
 independently and cache separately.

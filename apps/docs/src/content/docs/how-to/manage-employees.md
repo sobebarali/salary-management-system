@@ -9,8 +9,7 @@ Goal-oriented recipes. Each assumes the app is running and you're signed in
 [Frontend & UX](/explanation/frontend/).
 :::
 
-> Status: ✅ The Employees screen is built. 🟡 The Insights screen is still designed, not yet
-> built — those steps describe the intended flow.
+> Status: ✅ The Employees and Insights screens are built. The steps below describe the flows.
 
 ## Add an employee
 
