@@ -1,39 +1,55 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
-template: splash # Remove or comment out this line to display the site sidebar on this page.
+title: Salary Management System
+description: Technical documentation — architecture, data model, API design, and engineering decisions.
+template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
-  image:
-    file: ../../assets/houston.webp
+  tagline: A minimal yet usable salary management tool for an organization with 10,000 employees.
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Start the tutorial
+      link: /tutorials/getting-started/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
+    - text: Architecture (C4)
+      link: /explanation/architecture/
+      icon: open-book
       variant: minimal
 ---
 
 import { Card, CardGrid } from "@astrojs/starlight/components";
 
-## Next steps
+These docs are the **engineering artifact** for the build — architecture, data model, API
+contract, salary-insight definitions, and the trade-offs behind each decision.
+
+## How this documentation is organized
+
+This site follows **[Diátaxis](https://diataxis.fr)**, the widely-adopted documentation
+framework that splits docs into four types by what the reader needs *right now* — learning vs.
+doing, practical vs. theoretical. Each page is exactly one type. Architecture is described with
+the **[C4 model](https://c4model.com)**, and decisions are recorded as **ADRs**.
 
 <CardGrid stagger>
-  <Card title="Update content" icon="pencil">
-    Edit `src/content/docs/index.mdx` to see this page change.
+  <Card title="Tutorials — learning" icon="open-book">
+    Hand-held, start-to-finish. New here? [Getting Started](/tutorials/getting-started/) takes you
+    from clone to a running, seeded app.
   </Card>
-  <Card title="Change page layout" icon="document">
-    Delete `template: splash` in `src/content/docs/index.mdx` to display a sidebar on this page.
+  <Card title="How-to Guides — doing" icon="rocket">
+    Goal-oriented recipes for someone already set up: [seed 10k employees](/how-to/seed/),
+    [manage employees](/how-to/manage-employees/).
   </Card>
-  <Card title="Add new content" icon="add-document">
-    Add Markdown or MDX files to `src/content/docs` to create new pages.
+  <Card title="Reference — information" icon="list-format">
+    The facts you look up: [data model](/reference/data-model/), [API](/reference/api/),
+    [salary metrics](/reference/salary-metrics/), [configuration](/reference/configuration/).
   </Card>
-  <Card title="Configure your site" icon="setting">
-    Edit your `sidebar` and other config in `astro.config.mjs`.
-  </Card>
-  <Card title="Read the docs" icon="open-book">
-    Learn more in [the Starlight Docs](https://starlight.astro.build/).
+  <Card title="Explanation — understanding" icon="comment">
+    The *why*: [problem & goals](/explanation/problem-and-goals/),
+    [architecture](/explanation/architecture/), [testing](/explanation/testing/), and the
+    [decisions/ADRs](/explanation/decisions/).
   </Card>
 </CardGrid>
+
+## Status legend
+
+Throughout these docs, features carry one of these tags:
+
+- ✅ **Implemented** — exists in the codebase today.
+- 🟡 **Designed** — specified here, not yet built.
+- 🔭 **Considered** — evaluated, intentionally deferred (with rationale).

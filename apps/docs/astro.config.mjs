@@ -6,7 +6,9 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   integrations: [
     starlight({
-      title: "My Docs",
+      title: "Salary Management — Technical Docs",
+      description:
+        "Architecture, data model, API, and engineering decisions for the salary management system.",
       social: [
         {
           icon: "github",
@@ -14,17 +16,40 @@ export default defineConfig({
           href: "https://github.com/withastro/starlight",
         },
       ],
+      // Organized with the Diátaxis framework (https://diataxis.fr):
+      // Tutorials, How-to guides, Reference, Explanation.
       sidebar: [
         {
-          label: "Guides",
+          label: "Tutorials",
           items: [
-            // Each item here is one entry in the navigation menu.
-            { label: "Example Guide", slug: "guides/example" },
+            { label: "Getting Started", slug: "tutorials/getting-started" },
+          ],
+        },
+        {
+          label: "How-to Guides",
+          items: [
+            { label: "Seed 10,000 employees", slug: "how-to/seed" },
+            { label: "Manage employees", slug: "how-to/manage-employees" },
           ],
         },
         {
           label: "Reference",
-          items: [{ autogenerate: { directory: "reference" } }],
+          items: [
+            { label: "Data Model", slug: "reference/data-model" },
+            { label: "API", slug: "reference/api" },
+            { label: "Salary Metrics", slug: "reference/salary-metrics" },
+            { label: "Configuration & Scripts", slug: "reference/configuration" },
+          ],
+        },
+        {
+          label: "Explanation",
+          items: [
+            { label: "Problem & Goals", slug: "explanation/problem-and-goals" },
+            { label: "Architecture (C4)", slug: "explanation/architecture" },
+            { label: "Frontend & UX", slug: "explanation/frontend" },
+            { label: "Testing Strategy", slug: "explanation/testing" },
+            { label: "Decisions (ADRs)", slug: "explanation/decisions" },
+          ],
         },
       ],
     }),
