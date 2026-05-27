@@ -49,6 +49,12 @@ export const apiHandler = new OpenAPIHandler(appRouter, {
   plugins: [
     new OpenAPIReferencePlugin({
       schemaConverters: [new ZodToJsonSchemaConverter()],
+      // Behind a TLS-terminating proxy the server sees plain HTTP, so oRPC would
+      // infer an http:// server URL and the browser blocks the docs' requests as
+      // mixed content. Pin the public origin (HTTPS in prod, localhost in dev).
+      specGenerateOptions: {
+        servers: [{ url: `${env.BETTER_AUTH_URL}/api-reference` }],
+      },
     }),
   ],
   interceptors: [
