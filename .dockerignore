@@ -1,0 +1,45 @@
+# Keep the build context small and reproducible. node_modules and build outputs
+# are regenerated inside the image; secrets and local-only artifacts must never
+# enter it. Workspace package.json files are NOT ignored — bun --frozen-lockfile
+# needs every workspace manifest present to match the lockfile.
+
+# Dependencies (reinstalled in-image)
+node_modules
+**/node_modules
+
+# Build outputs (rebuilt in-image)
+**/dist
+**/build
+*.tsbuildinfo
+apps/docs/.astro
+
+# Secrets and local env
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+
+# Git / tooling caches
+.git
+.gitignore
+.turbo
+**/.turbo
+.vscode
+.idea
+
+# Tests / reports
+coverage
+**/test-results
+**/playwright-report
+**/playwright/.cache
+
+# Docs site for the app itself isn't needed to build server/web images,
+# but its package.json is kept (above) so the lockfile still resolves.
+apps/docs/dist
+
+# Misc
+*.log
+.DS_Store
+README.md
+DEPLOYMENT.md

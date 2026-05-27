@@ -30,6 +30,7 @@ export default defineConfig({
           items: [
             { label: "Seed 10,000 employees", slug: "how-to/seed" },
             { label: "Manage employees", slug: "how-to/manage-employees" },
+            { label: "Deploy with Docker", slug: "how-to/deploy" },
           ],
         },
         {

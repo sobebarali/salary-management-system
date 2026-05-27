@@ -1,0 +1,92 @@
+# Production-style stack: Postgres + one-shot migrate + Hono server + static web.
+# Copy .env.example -> .env and fill it in, then: docker compose -f docker-compose.prod.yml up --build
+# Seed 10k employees (optional): docker compose -f docker-compose.prod.yml --profile seed run --rm seed
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Applies committed Drizzle migrations, then exits. Server waits for it to finish.
+  # Reuses the server image's builder stage (has Bun + drizzle-kit + migrations).
+  migrate:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+      target: builder
+    command: ["sh", "-c", "cd packages/db && bunx drizzle-kit migrate"]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  server:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:?set BETTER_AUTH_URL in .env}
+      CORS_ORIGIN: ${CORS_ORIGIN:?set CORS_ORIGIN in .env}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        # Baked into the static bundle at build time — must equal the server's public origin.
+        VITE_SERVER_URL: ${VITE_SERVER_URL:?set VITE_SERVER_URL in .env}
+    ports:
+      - "8080:80"
+    depends_on:
+      - server
+    restart: unless-stopped
+
+  # Optional: seed 10k employees. Run explicitly via the "seed" profile, never on `up`.
+  seed:
+    profiles: ["seed"]
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+      target: builder
+    command: ["sh", "-c", "cd packages/db && bun src/seed.ts"]
+    # The seed imports the db package, which loads packages/env/server and validates
+    # the full server env — so it needs the same vars as the server, not just DATABASE_URL.
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:?set BETTER_AUTH_URL in .env}
+      CORS_ORIGIN: ${CORS_ORIGIN:?set CORS_ORIGIN in .env}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: "no"
+
+volumes:
+  postgres_data:
