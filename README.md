@@ -1,108 +1,129 @@
-# salary-management-system
+# Salary Management System
 
-A modern TypeScript monorepo combining React, TanStack Router, Hono, and oRPC.
+A minimal yet usable salary management tool for an organization with ~10,000 employees.
+The user is an **HR Manager**: they manage the employee roster and read salary insights
+to make compensation decisions.
 
-## Features
+Built as a TypeScript monorepo with a strict **TDD** discipline — the commit history is
+meant to read as the test-first story, one small step at a time.
 
-- **TypeScript** - For type safety and improved developer experience
-- **TanStack Router** - File-based routing with full type safety
-- **TailwindCSS** - Utility-first CSS for rapid UI development
-- **Shared UI package** - shadcn/ui primitives live in `packages/ui`
-- **Hono** - Lightweight, performant server framework
-- **oRPC** - End-to-end type-safe APIs with OpenAPI integration
-- **Node.js** - Runtime environment
-- **Drizzle** - TypeScript-first ORM
-- **PostgreSQL** - Database engine
-- **Authentication** - Better-Auth
-- **Turborepo** - Optimized monorepo build system
-- **Husky** - Git hooks for code quality
-- **Starlight** - Documentation site with Astro
+## What it does
 
-## Getting Started
+| Capability | Where |
+|---|---|
+| Add / view / update / delete employees (UI) | `apps/web` employees screen + form dialog |
+| Server-side paginated, filtered, sorted roster (never ships 10k rows to the browser) | `employees.list` |
+| Min / max / **average** salary per country | `insights.salaryByCountry` |
+| Average salary for a **job title within a country** | `insights.topJobTitles` |
+| Salary distribution **histogram** (extra HR-useful metric) | `insights.histogram` |
+| Fast, deterministic **10k-employee seed** | `packages/db/src/seed.ts` (`bun run db:seed`) |
 
-First, install the dependencies:
+A few deliberate domain rules: money is stored as **integer minor units** with an ISO-4217
+currency (never floats); country is normalized **ISO 3166-1 alpha-2**; every salary metric
+is computed **in PostgreSQL** (`avg`/`min`/`max`/`percentile`/`width_bucket`), never by pulling
+the roster into JS; and every domain procedure requires a valid auth session.
+
+## Stack
+
+- **`apps/web`** — React 19 · TanStack Router (file-based) + Query · Tailwind v4 · shadcn/ui (via `packages/ui`) · oRPC client · Better-Auth client.
+- **`apps/server`** — Hono (`@hono/node-server`) mounting Better-Auth (`/api/auth/*`), oRPC (`/rpc`), and OpenAPI/Swagger (`/api-reference`); evlog logging + CORS.
+- **`apps/docs`** — Astro Starlight technical docs, organized with **Diátaxis**.
+- **`packages/`** — `api` (oRPC routers), `auth` (Better-Auth + Drizzle adapter), `db` (Drizzle + PostgreSQL schema — *source of truth*), `ui`, `env` (`@t3-oss/env-core` + Zod), `config`.
+- Tooling: Turborepo + Bun workspaces (`catalog:` deps), Ultracite/Biome, Husky.
+
+```
+            type-safe RPC (types only over the wire)
+  apps/web ──────────────────────────────────────▶ apps/server ──▶ PostgreSQL
+  (React SPA)        oRPC client / Better-Auth        (Hono)          (Drizzle)
+```
+
+Ports: web **5173**, server **3000**, Swagger **3000/api-reference**.
+
+## Quickstart (local development)
+
+Requires [Bun](https://bun.sh) and a PostgreSQL instance.
 
 ```bash
 bun install
-```
 
-## Database Setup
+# 1. Configure env (templates are committed; real .env files are gitignored)
+cp apps/server/.env.example apps/server/.env   # set DATABASE_URL + BETTER_AUTH_SECRET
+cp apps/web/.env.example apps/web/.env          # VITE_SERVER_URL=http://localhost:3000
 
-This project uses PostgreSQL with Drizzle ORM.
+# 2. Create the schema (drizzle-kit), then seed 10k employees
+bun run db:push        # or `bun run db:migrate` to apply committed migrations
+bun run db:seed
 
-1. Make sure you have a PostgreSQL database set up.
-2. Update your `apps/server/.env` file with your PostgreSQL connection details.
-
-3. Apply the schema to your database:
-
-```bash
-bun run db:push
-```
-
-Then, run the development server:
-
-```bash
+# 3. Run web + server together
 bun run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser to see the web application.
-The API is running at [http://localhost:3000](http://localhost:3000).
+Open **http://localhost:5173**, sign up, and you're in. The API and Swagger UI are at
+**http://localhost:3000** and **/api-reference**.
 
-## UI Customization
+> No local Postgres? `bun run db:start` brings one up via Docker (`packages/db/docker-compose.yml`).
 
-React web apps in this stack share shadcn/ui primitives through `packages/ui`.
-
-- Change design tokens and global styles in `packages/ui/src/styles/globals.css`
-- Update shared primitives in `packages/ui/src/components/*`
-- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
-
-### Add more shared components
-
-Run this from the project root to add more primitives to the shared UI package:
+## Run the whole stack in Docker
 
 ```bash
-npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
+cp .env.example .env && docker compose -f docker-compose.prod.yml up --build
+# web → http://localhost:8080 · server → http://localhost:3000
 ```
 
-Import shared components like this:
+See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for the full guide (compiled-binary server,
+the `VITE_SERVER_URL` build-time gotcha, cross-origin auth cookies, migrations, and
+real-host hardening).
 
-```tsx
-import { Button } from "@salary-management-system/ui/components/button";
+## Testing
+
+```bash
+bun run test          # unit + integration (vitest). Integration tests hit a real Postgres.
+bun run check-types   # TypeScript across all packages
+bun run check         # Ultracite/Biome lint + format check
 ```
 
-### Add app-specific blocks
+- **Pure logic** (money major/minor conversion, deterministic seed generation, Zod schemas) → exact unit tests, no I/O.
+- **SQL aggregates and oRPC procedures** → integration tests against a real Postgres, never mocked — so the insight math is actually verified.
+- Golden-path **Playwright** e2e (sign up → add employee → insights): `bun run --filter web test:e2e`.
 
-If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
+## Documentation
 
-## Git Hooks and Formatting
+The Starlight site under `apps/docs` is the source of truth for design and contracts,
+organized with [Diátaxis](https://diataxis.fr): **Tutorials** (getting started),
+**How-to** (seed, manage employees, deploy), **Reference** (data model, API, salary
+metrics, configuration), and **Explanation** (problem & goals, architecture/C4, frontend,
+testing, and ADRs — the *why* behind each decision).
 
-- Initialize hooks: `bun run prepare`
+```bash
+cd apps/docs && bun run dev     # browse the docs locally
+```
 
-## Project Structure
+## Project structure
 
 ```
 salary-management-system/
 ├── apps/
-│   ├── web/         # Frontend application (React + TanStack Router)
-│   ├── docs/        # Documentation site (Astro Starlight)
-│   └── server/      # Backend API (Hono, ORPC)
+│   ├── web/      # React + TanStack Router SPA
+│   ├── server/   # Hono API (Better-Auth, oRPC, OpenAPI)
+│   └── docs/     # Astro Starlight technical docs
 ├── packages/
-│   ├── ui/          # Shared shadcn/ui components and styles
-│   ├── api/         # API layer / business logic
-│   ├── auth/        # Authentication configuration & logic
-│   └── db/          # Database schema & queries
+│   ├── api/      # oRPC routers & procedures
+│   ├── auth/     # Better-Auth + Drizzle adapter
+│   ├── db/       # Drizzle schema (source of truth) + 10k seed
+│   ├── ui/       # Shared shadcn/ui primitives
+│   ├── env/      # Validated env (@t3-oss/env-core + Zod)
+│   └── config/   # Shared TS config
+├── docker-compose.prod.yml
+└── DEPLOYMENT.md
 ```
 
-## Available Scripts
+## Key scripts
 
-- `bun run dev`: Start all applications in development mode
-- `bun run build`: Build all applications
-- `bun run dev:web`: Start only the web application
-- `bun run dev:server`: Start only the server
-- `bun run check-types`: Check TypeScript types across all apps
-- `bun run db:push`: Push schema changes to database
-- `bun run db:generate`: Generate database client/types
-- `bun run db:migrate`: Run database migrations
-- `bun run db:studio`: Open database studio UI
-- `cd apps/docs && bun run dev`: Start documentation site
-- `cd apps/docs && bun run build`: Build documentation site
+| Script | Does |
+|---|---|
+| `bun run dev` | Start web + server (Turborepo) |
+| `bun run dev:web` / `dev:server` | Start one app |
+| `bun run db:push` / `db:migrate` / `db:seed` | Schema + seed |
+| `bun run db:studio` | Drizzle Studio |
+| `bun run test` / `check-types` / `check` | Tests · types · lint |
+| `bun run build` | Build all apps |
