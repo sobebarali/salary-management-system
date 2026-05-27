@@ -65,6 +65,16 @@ services:
       - server
     restart: unless-stopped
 
+  # Static technical docs (Astro Starlight). No env/build args — it's a pure
+  # static site, independent of the API and database.
+  docs:
+    build:
+      context: .
+      dockerfile: apps/docs/Dockerfile
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+
   # Optional: seed 10k employees. Run explicitly via the "seed" profile, never on `up`.
   seed:
     profiles: ["seed"]

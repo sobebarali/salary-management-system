@@ -1,6 +1,6 @@
 ---
 title: Deploy with Docker
-description: Containerize and run the full stack — web, server, Postgres, and migrations — with Docker Compose.
+description: Containerize and run the full stack — web, server, Postgres, migrations, and docs — with Docker Compose.
 ---
 
 :::note[How-to guide — task-oriented]
@@ -8,20 +8,24 @@ A recipe to get the app running in containers. The full reference (env table,
 hardening checklist, real-host notes) lives in **`DEPLOYMENT.md`** at the repo root.
 :::
 
-> Status: ✅ **Implemented** — `apps/server/Dockerfile`, `apps/web/Dockerfile`
-> (+ `apps/web/nginx.conf`), and `docker-compose.prod.yml`. `.env.example` templates
-> sit at the repo root and in each app.
+> Status: ✅ **Implemented** — `apps/server/Dockerfile`, `apps/web/Dockerfile`,
+> `apps/docs/Dockerfile` (+ `apps/web/nginx.conf` and `apps/docs/nginx.conf`), and
+> `docker-compose.prod.yml`. `.env.example` templates sit at the repo root and in each app.
 
 ## The stack
 
-Four containers: a static **web** SPA (nginx), the **server** compiled to a
-self-contained binary, a one-shot **migrate** step, and **postgres** with a named volume.
+Five containers: a static **web** SPA (nginx), the **server** compiled to a
+self-contained binary, a one-shot **migrate** step, **postgres** with a named volume,
+and this static **docs** site (nginx).
 
 - **server** — `bun build --compile` bundles the whole dependency graph into one
   binary, so the runtime image carries no `node_modules` and starts in well under a
   second. On a Bun workspace this also sidesteps the current `turbo prune --docker`
   / `bun.lock` regression (turborepo #12262).
 - **web** — Vite builds static files served by `nginx:alpine` with SPA fallback.
+- **docs** — Astro Starlight builds to static files served by `nginx:alpine`. It's a
+  multi-page site (not a SPA), so unknown paths return 404 rather than the homepage.
+  Independent of the API and database — no env or build args.
 
 ## Run it
 
@@ -32,6 +36,7 @@ docker compose -f docker-compose.prod.yml up --build
 
 - Web → http://localhost:8080
 - Server → http://localhost:3000 (OpenAPI at `/api-reference`)
+- Docs → http://localhost:8081
 
 Seed 10k employees (opt-in profile):
 

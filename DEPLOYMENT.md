@@ -1,7 +1,7 @@
 # Deployment
 
 This project ships as Docker images so it runs the same on a laptop, a VM, or any
-container host. The stack is four pieces:
+container host. The stack is five pieces:
 
 ```
 ┌─────────────┐      ┌──────────────────┐      ┌────────────────────┐
@@ -11,15 +11,18 @@ container host. The stack is four pieces:
 │  :8080      │ auth │  :3000           │      │  internal only     │
 └─────────────┘      └──────────────────┘      └────────────────────┘
                             ▲
-                     ┌──────┴───────┐
-                     │  migrate     │  one-shot: drizzle-kit migrate, then exits
-                     └──────────────┘
+                     ┌──────┴───────┐         ┌──────────────────┐
+                     │  migrate     │         │  docs            │
+                     │  drizzle-kit │         │  nginx static    │
+                     │  (one-shot)  │         │  Starlight :8081 │
+                     └──────────────┘         └──────────────────┘
 ```
 
 - **web** — the Vite/React SPA, built to static files and served by `nginx:alpine` with SPA fallback.
 - **server** — the Hono API, compiled by `bun build --compile` into one self-contained binary on a minimal `debian-slim` runtime (no `node_modules`, sub-second cold start).
 - **migrate** — a one-shot that applies committed Drizzle migrations before the server starts.
 - **postgres** — PostgreSQL 17 with a named volume for durable data.
+- **docs** — the Astro Starlight technical docs, built to static files and served by `nginx:alpine`. Independent of the API and database (no env/build args).
 
 > **Why a compiled binary for the server?** On a Bun workspace, `turbo prune --docker`
 > currently has a `bun.lock` regression (turborepo #12262, early 2026) that breaks
@@ -40,7 +43,8 @@ docker compose -f docker-compose.prod.yml up --build
 ```
 
 Then open **http://localhost:8080**. The API is at **http://localhost:3000**
-(Swagger/OpenAPI at `http://localhost:3000/api-reference`).
+(Swagger/OpenAPI at `http://localhost:3000/api-reference`), and the technical
+docs are at **http://localhost:8081**.
 
 Seed 10,000 employees (optional, runs the fast batched seed):
 
@@ -129,9 +133,12 @@ docker build -f apps/server/Dockerfile -t salary-server .
 
 # Web (provide the server origin at build time)
 docker build -f apps/web/Dockerfile --build-arg VITE_SERVER_URL=http://localhost:3000 -t salary-web .
+
+# Docs (no build args — pure static site)
+docker build -f apps/docs/Dockerfile -t salary-docs .
 ```
 
-(Build context is the **repo root** in both cases — the Bun workspace needs the whole monorepo.)
+(Build context is the **repo root** in every case — the Bun workspace needs the whole monorepo.)
 
 ## Optional: `turbo prune` to shrink the build context
 
