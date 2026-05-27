@@ -7,6 +7,21 @@ to make compensation decisions.
 Built as a TypeScript monorepo with a strict **TDD** discipline — the commit history is
 meant to read as the test-first story, one small step at a time.
 
+## Live demo
+
+A deployed instance runs on Railway (web SPA + Hono API + Postgres + docs):
+
+| | URL |
+|---|---|
+| **App** — sign in here | https://web-production-aba46.up.railway.app |
+| **API** + Swagger | https://salary-management-system-production-c726.up.railway.app/api-reference |
+| **Docs** | https://docs-production-cb01.up.railway.app |
+
+**Demo login:** `hr@salary.test` · `HrManager78a56fdd!`
+
+> Public demo with seeded, fictional data. These credentials are shared, so anyone
+> can sign in and change the demo roster — don't enter anything real.
+
 ## What it does
 
 | Capability | Where |

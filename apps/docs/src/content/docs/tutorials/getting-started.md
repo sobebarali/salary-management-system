@@ -9,6 +9,12 @@ locally with 10,000 employees and working salary insights. We explain *just enou
 moving — the *why* lives in [Explanation](/explanation/architecture/).
 :::
 
+:::tip[Just want to look around?]
+A live demo is deployed — open <https://web-production-aba46.up.railway.app> and use the
+shared login from the [deploy guide](/how-to/deploy/#live-deployment). This tutorial is for
+running it yourself.
+:::
+
 ## What you'll achieve
 
 By the end of this tutorial you will have:

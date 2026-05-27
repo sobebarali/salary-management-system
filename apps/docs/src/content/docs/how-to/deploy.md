@@ -12,6 +12,20 @@ hardening checklist, real-host notes) lives in **`DEPLOYMENT.md`** at the repo r
 > `apps/docs/Dockerfile` (+ `apps/web/nginx.conf` and `apps/docs/nginx.conf`), and
 > `docker-compose.prod.yml`. `.env.example` templates sit at the repo root and in each app.
 
+## Live deployment
+
+A live instance runs on Railway — each service builds from its Dockerfile on every
+push to `main`:
+
+| Service | URL |
+|---|---|
+| App | <https://web-production-aba46.up.railway.app> |
+| API + Swagger | <https://salary-management-system-production-c726.up.railway.app/api-reference> |
+| Docs | <https://docs-production-cb01.up.railway.app> |
+
+**Demo login:** `hr@salary.test` · `HrManager78a56fdd!` — a public, shared account over
+seeded fictional data, so don't enter anything real.
+
 ## The stack
 
 Five containers: a static **web** SPA (nginx), the **server** compiled to a
